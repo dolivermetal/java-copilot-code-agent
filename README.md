@@ -29,6 +29,33 @@
 
 *There's no better way to learn than building things!* 🚀
 
+---
+
+## 📋 Issue Templates for Teachers
+
+We've created a comprehensive set of issue templates to make it easy for teachers to request changes to the school management system without needing to understand technical details.
+
+### Available Templates:
+
+- 🎯 **Add New Activity** - Create a new extracurricular activity
+- ✏️ **Modify Activity** - Change details of existing activities
+- 📊 **Change Capacity** - Adjust maximum participant limits
+- 📅 **Change Schedule** - Update activity days and times
+- 🗑️ **Remove Activity** - Delete activities from the system
+- 👥 **Manage Enrollments** - Bulk student enrollment operations
+- 🐛 **Bug Report** - Report system issues
+- ✨ **Feature Request** - Suggest new functionality
+
+### How to Use:
+
+1. Go to the [Issues tab](https://github.com/dolivermetal/java-copilot-code-agent/issues)
+2. Click "New issue"
+3. Choose the appropriate template
+4. Fill out the form with details
+5. Submit - Copilot will be automatically assigned!
+
+📚 **Read the full guide:** [Issue Templates Guide](./docs/ISSUE_TEMPLATES_GUIDE.md)
+
 </div>
 
 ---
