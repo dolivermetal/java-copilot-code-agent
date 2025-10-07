@@ -1,0 +1,152 @@
+name: 🗑️ Remover Atividade
+description: Solicitar a remoção de uma atividade extracurricular do sistema
+title: "[Remover Atividade]: "
+labels: ["enhancement", "atividade", "remoção", "copilot"]
+assignees:
+  - copilot
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🗑️ Formulário de Remoção de Atividade
+        
+        Use este formulário para solicitar a remoção permanente de uma atividade.
+        **Esta ação é irreversível.**
+        
+        **O Copilot será automaticamente designado para implementar esta solicitação.**
+
+  - type: input
+    id: activity-name
+    attributes:
+      label: Nome da Atividade *
+      description: Nome exato da atividade a ser removida
+      placeholder: "Ex: Old Activity Name"
+    validations:
+      required: true
+
+  - type: textarea
+    id: justification
+    attributes:
+      label: Justificativa *
+      description: Por que esta atividade precisa ser removida?
+      placeholder: "Ex: A atividade foi descontinuada devido à falta de interesse dos estudantes."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: has-participants
+    attributes:
+      label: A atividade tem participantes inscritos? *
+      description: Verificar antes de remover
+      options:
+        - Não - nenhum estudante inscrito
+        - Sim - mas já foram notificados e realocados
+        - Não sei
+    validations:
+      required: true
+
+  - type: textarea
+    id: participant-plan
+    attributes:
+      label: Plano para Participantes
+      description: Se houver estudantes inscritos, como eles serão tratados?
+      placeholder: "Ex: Todos os estudantes foram notificados e realocados para atividades similares."
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmações *
+      description: Confirme os seguintes pontos antes de prosseguir
+      options:
+        - label: Entendo que esta ação é irreversível
+          required: true
+        - label: Todos os estudantes afetados foram notificados
+          required: true
+        - label: Tenho autorização para remover esta atividade
+          required: true
+        - label: Verifiquei que não há conflitos ou dependências
+          required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Informações Adicionais
+      description: Qualquer outra informação relevante
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## 🤖 Critérios de Aceitação para o Copilot
+        
+        A implementação deve:
+        1. Localizar a atividade existente pelo nome exato
+        2. Verificar se há participantes inscritos
+        3. Se houver participantes, documentar na migração ou solicitar confirmação
+        4. Remover a atividade do banco de dados
+        5. Criar uma migração Mongock com método de rollback
+        6. Verificar que a atividade não aparece mais na interface web
+        7. Garantir que a remoção não quebra funcionalidades existentes
+        
+        ## 💡 Dicas de Implementação
+        
+        - Criar nova migração: `V00X_RemoveActivity_[NomeAtividade].java`
+        - Localizar atividade: `mongoTemplate.findOne(Query.query(Criteria.where("name").is(activityName)), Activity.class)`
+        - Verificar participantes:
+          ```java
+          if (activity != null && !activity.getParticipants().isEmpty()) {
+              // Log ou lançar exceção
+              System.out.println("WARNING: Removing activity with " + 
+                  activity.getParticipants().size() + " participants");
+          }
+          ```
+        - Remover: `mongoTemplate.remove(activity)`
+        - Implementar rollback para restaurar a atividade se necessário
+        
+        ## 🔍 Contexto Técnico
+        
+        - **Operação**: `mongoTemplate.remove(Query.query(Criteria.where("name").is(activityName)), Activity.class)`
+        - **Rollback**: Salvar dados da atividade antes de remover para poder restaurar
+        - **Collection**: "activities"
+        
+        ## 📋 Checklist de Implementação
+        
+        ```java
+        @Execution
+        public void execute() {
+            Query query = new Query(Criteria.where("name").is("ActivityName"));
+            Activity activity = mongoTemplate.findOne(query, Activity.class);
+            
+            if (activity != null) {
+                // Log para auditoria
+                System.out.println("Removing activity: " + activity.getName());
+                System.out.println("Current participants: " + activity.getParticipants().size());
+                
+                // Remover
+                mongoTemplate.remove(activity);
+            }
+        }
+        
+        @RollbackExecution
+        public void rollback() {
+            // Restaurar atividade se necessário
+            // Usar dados salvos para recriar
+        }
+        ```
+        
+        ## ⚠️ Validações e Cuidados
+        
+        - **Backup**: Salvar dados da atividade antes de remover (para rollback)
+        - **Participantes**: Registrar no log quantos participantes serão afetados
+        - **Auditoria**: Adicionar log detalhado da remoção
+        - **Rollback**: Implementar método de rollback funcional
+        - **Testes**: Verificar que outras funcionalidades continuam funcionando
+        
+        ## 🎯 Verificações Pós-Remoção
+        
+        - [ ] Atividade não aparece na listagem da interface web
+        - [ ] Endpoint GET /activities não retorna a atividade
+        - [ ] Filtros continuam funcionando
+        - [ ] Nenhuma referência órfã no sistema
+        - [ ] Log de auditoria registra a remoção

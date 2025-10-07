@@ -253,3 +253,30 @@ O sistema utiliza **Mongock** para realizar migrações automáticas do banco de
 ### Perfis de Ambiente
 
 - **dev** - Ambiente de desenvolvimento
+
+## 📋 Solicitando Mudanças
+
+Professores podem solicitar alterações no sistema usando os **templates de issue** criados especialmente para facilitar o processo.
+
+### Templates Disponíveis:
+
+O sistema oferece templates para as seguintes tarefas comuns:
+
+- 🎯 **Adicionar Nova Atividade** - Criar atividades extracurriculares
+- ✏️ **Modificar Atividade** - Alterar detalhes de atividades existentes
+- 📊 **Alterar Capacidade** - Ajustar limite de participantes
+- 📅 **Alterar Horário** - Modificar dias e horários
+- 🗑️ **Remover Atividade** - Excluir atividades do sistema
+- 👥 **Gerenciar Inscrições** - Operações em massa com estudantes
+- 🐛 **Reportar Bug** - Relatar problemas no sistema
+- ✨ **Solicitar Funcionalidade** - Sugerir melhorias
+
+### Como Usar:
+
+1. Acesse a aba [Issues](https://github.com/dolivermetal/java-copilot-code-agent/issues)
+2. Clique em "New issue"
+3. Escolha o template apropriado
+4. Preencha o formulário com os detalhes necessários
+5. Submeta - o Copilot será automaticamente designado!
+
+📚 **Guia Completo:** Consulte [Issue Templates Guide](./ISSUE_TEMPLATES_GUIDE.md) para instruções detalhadas sobre como usar cada template.

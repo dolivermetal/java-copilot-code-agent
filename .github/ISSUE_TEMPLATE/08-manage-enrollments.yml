@@ -1,0 +1,250 @@
+name: 👥 Gerenciar Inscrições de Estudantes
+description: Solicitar alterações em massa nas inscrições de estudantes
+title: "[Inscrições]: "
+labels: ["enhancement", "inscrições", "copilot"]
+assignees:
+  - copilot
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 👥 Formulário de Gerenciamento de Inscrições
+        
+        Use este formulário para solicitar alterações em inscrições de estudantes,
+        como transferências em massa, cancelamentos ou correções.
+        
+        **O Copilot será automaticamente designado para implementar esta solicitação.**
+
+  - type: dropdown
+    id: operation-type
+    attributes:
+      label: Tipo de Operação *
+      description: Que tipo de alteração você precisa fazer?
+      options:
+        - Transferir estudantes entre atividades
+        - Cancelar múltiplas inscrições
+        - Adicionar múltiplos estudantes
+        - Corrigir emails de estudantes
+        - Limpar lista de participantes
+        - Exportar lista de participantes
+        - Outro
+    validations:
+      required: true
+
+  - type: input
+    id: activity-name
+    attributes:
+      label: Nome da Atividade Principal *
+      description: Nome da atividade afetada
+      placeholder: "Ex: Chess Club"
+    validations:
+      required: true
+
+  - type: input
+    id: activity-name-secondary
+    attributes:
+      label: Nome da Atividade Secundária
+      description: (Opcional) Se for transferência, para qual atividade?
+      placeholder: "Ex: Advanced Chess Club"
+
+  - type: textarea
+    id: student-list
+    attributes:
+      label: Lista de Estudantes
+      description: Liste os emails dos estudantes afetados (um por linha)
+      placeholder: |
+        student1@mergington.edu
+        student2@mergington.edu
+        student3@mergington.edu
+      render: text
+
+  - type: textarea
+    id: justification
+    attributes:
+      label: Justificativa *
+      description: Por que esta alteração é necessária?
+      placeholder: "Ex: A turma foi dividida em dois níveis e os estudantes avançados precisam ser transferidos."
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmações *
+      description: Confirme os seguintes pontos
+      options:
+        - label: Tenho autorização para fazer estas alterações
+          required: true
+        - label: Todos os estudantes/responsáveis foram notificados
+          required: true
+        - label: Verifiquei que as atividades de destino têm capacidade (se transferência)
+          required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Informações Adicionais
+      description: Qualquer outra informação relevante
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## 🤖 Critérios de Aceitação para o Copilot
+        
+        A implementação deve:
+        1. Validar que as atividades mencionadas existem
+        2. Validar formato dos emails fornecidos
+        3. Para transferências:
+           - Verificar capacidade da atividade de destino
+           - Remover estudantes da atividade origem
+           - Adicionar estudantes na atividade destino
+           - Validar que não há duplicatas
+        4. Para cancelamentos:
+           - Verificar que os estudantes estão inscritos
+           - Remover estudantes da atividade
+        5. Para adições:
+           - Verificar capacidade disponível
+           - Validar que estudantes não estão já inscritos
+           - Adicionar estudantes
+        6. Criar migração Mongock com rollback
+        7. Validar alterações na interface web
+        
+        ## 💡 Dicas de Implementação
+        
+        ### Transferência de Estudantes
+        ```java
+        @Execution
+        public void execute() {
+            // 1. Buscar atividades
+            Activity origin = mongoTemplate.findOne(
+                Query.query(Criteria.where("name").is("Chess Club")), 
+                Activity.class);
+            Activity destination = mongoTemplate.findOne(
+                Query.query(Criteria.where("name").is("Advanced Chess Club")), 
+                Activity.class);
+            
+            // 2. Lista de estudantes para transferir
+            List<String> students = List.of(
+                "student1@mergington.edu",
+                "student2@mergington.edu"
+            );
+            
+            // 3. Validar capacidade
+            if (destination.getParticipants().size() + students.size() > 
+                destination.getMaxParticipants()) {
+                throw new IllegalStateException("Insufficient capacity");
+            }
+            
+            // 4. Transferir cada estudante
+            for (String email : students) {
+                Email studentEmail = new Email(email);
+                
+                // Remover da origem
+                if (origin.isParticipantRegistered(studentEmail)) {
+                    origin.removeParticipant(studentEmail);
+                }
+                
+                // Adicionar no destino
+                if (!destination.isParticipantRegistered(studentEmail)) {
+                    destination.addParticipant(studentEmail);
+                }
+            }
+            
+            // 5. Salvar alterações
+            mongoTemplate.save(origin);
+            mongoTemplate.save(destination);
+        }
+        ```
+        
+        ### Cancelamento em Massa
+        ```java
+        @Execution
+        public void execute() {
+            Activity activity = mongoTemplate.findOne(
+                Query.query(Criteria.where("name").is("Activity Name")), 
+                Activity.class);
+            
+            List<String> studentsToRemove = List.of(
+                "student1@mergington.edu",
+                "student2@mergington.edu"
+            );
+            
+            for (String email : studentsToRemove) {
+                Email studentEmail = new Email(email);
+                if (activity.isParticipantRegistered(studentEmail)) {
+                    activity.removeParticipant(studentEmail);
+                }
+            }
+            
+            mongoTemplate.save(activity);
+        }
+        ```
+        
+        ### Adição em Massa
+        ```java
+        @Execution
+        public void execute() {
+            Activity activity = mongoTemplate.findOne(
+                Query.query(Criteria.where("name").is("Activity Name")), 
+                Activity.class);
+            
+            List<String> studentsToAdd = List.of(
+                "student1@mergington.edu",
+                "student2@mergington.edu"
+            );
+            
+            // Validar capacidade total
+            int spotsNeeded = studentsToAdd.size();
+            int spotsAvailable = activity.getMaxParticipants() - 
+                                activity.getParticipants().size();
+            
+            if (spotsNeeded > spotsAvailable) {
+                throw new IllegalStateException(
+                    "Not enough capacity. Need: " + spotsNeeded + 
+                    ", Available: " + spotsAvailable);
+            }
+            
+            // Adicionar cada estudante
+            for (String email : studentsToAdd) {
+                Email studentEmail = new Email(email);
+                if (!activity.isParticipantRegistered(studentEmail)) {
+                    activity.addParticipant(studentEmail);
+                }
+            }
+            
+            mongoTemplate.save(activity);
+        }
+        ```
+        
+        ## 🔍 Contexto Técnico
+        
+        - **Entidade**: `Activity` - contém lista de participantes
+        - **Value Object**: `Email` - valida formato de email
+        - **Métodos úteis**:
+          - `activity.addParticipant(Email)` - adiciona com validações
+          - `activity.removeParticipant(Email)` - remove com validações
+          - `activity.isParticipantRegistered(Email)` - verifica existência
+          - `activity.canAddParticipant()` - verifica capacidade
+          - `activity.getParticipants()` - lista atual
+        
+        ## ⚠️ Validações Importantes
+        
+        1. **Capacidade**: Sempre verificar antes de adicionar
+        2. **Duplicatas**: Não adicionar estudante já inscrito
+        3. **Emails**: Validar formato usando classe Email
+        4. **Existência**: Verificar se estudante está na origem antes de remover
+        5. **Atomicidade**: Todas operações devem suceder ou falhar juntas
+        
+        ## 📋 Checklist de Validação
+        
+        - [ ] Atividade(s) localizada(s) corretamente
+        - [ ] Emails validados (formato correto)
+        - [ ] Capacidade verificada (para adições/transferências)
+        - [ ] Duplicatas prevenidas
+        - [ ] Estudantes existentes verificados (para remoções)
+        - [ ] Alterações persistidas no banco
+        - [ ] Rollback implementado
+        - [ ] Validado na interface web
+        - [ ] Listas de participantes atualizadas corretamente
