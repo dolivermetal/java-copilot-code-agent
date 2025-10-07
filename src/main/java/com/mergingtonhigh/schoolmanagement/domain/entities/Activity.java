@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.mergingtonhigh.schoolmanagement.domain.valueobjects.ActivityType;
+import com.mergingtonhigh.schoolmanagement.domain.valueobjects.DifficultyLevel;
 import com.mergingtonhigh.schoolmanagement.domain.valueobjects.Email;
 import com.mergingtonhigh.schoolmanagement.domain.valueobjects.ScheduleDetails;
 
@@ -24,6 +25,7 @@ public class Activity {
     private int maxParticipants;
     private List<String> participants;
     private ActivityType type;
+    private DifficultyLevel difficultyLevel;
 
     public Activity() {
         this.participants = new ArrayList<>();
@@ -145,5 +147,13 @@ public class Activity {
 
     public void setType(ActivityType type) {
         this.type = type != null ? type : ActivityType.determineFromContent(this.name, this.description);
+    }
+
+    public DifficultyLevel getDifficultyLevel() {
+        return difficultyLevel;
+    }
+
+    public void setDifficultyLevel(DifficultyLevel difficultyLevel) {
+        this.difficultyLevel = difficultyLevel;
     }
 }
