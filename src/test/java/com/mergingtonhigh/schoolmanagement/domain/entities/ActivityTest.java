@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import com.mergingtonhigh.schoolmanagement.domain.valueobjects.ActivityType;
+import com.mergingtonhigh.schoolmanagement.domain.valueobjects.DifficultyLevel;
 import com.mergingtonhigh.schoolmanagement.domain.valueobjects.Email;
 import com.mergingtonhigh.schoolmanagement.domain.valueobjects.ScheduleDetails;
 
@@ -105,6 +106,18 @@ class ActivityTest {
 
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> activity.removeParticipant(studentEmail));
+    }
+
+    @Test
+    void shouldSetAndGetDifficultyLevel() {
+        // Arrange
+        Activity activity = createTestActivity();
+
+        // Act
+        activity.setDifficultyLevel(DifficultyLevel.INTERMEDIATE);
+
+        // Assert
+        assertEquals(DifficultyLevel.INTERMEDIATE, activity.getDifficultyLevel());
     }
 
     private Activity createTestActivity() {
