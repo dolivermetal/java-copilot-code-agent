@@ -1,0 +1,214 @@
+name: ✨ Solicitar Nova Funcionalidade
+description: Sugerir uma nova funcionalidade ou melhoria para o sistema
+title: "[Feature]: "
+labels: ["enhancement", "feature-request", "copilot"]
+assignees:
+  - copilot
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## ✨ Formulário de Nova Funcionalidade
+        
+        Use este formulário para sugerir novas funcionalidades ou melhorias no sistema.
+        Seja o mais específico possível sobre o que você precisa.
+        
+        **O Copilot será automaticamente designado para avaliar e implementar.**
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Categoria *
+      description: Que tipo de funcionalidade você está solicitando?
+      options:
+        - Nova funcionalidade - Interface Web
+        - Nova funcionalidade - API REST
+        - Melhoria - Interface Web
+        - Melhoria - Performance
+        - Melhoria - Usabilidade
+        - Nova integração
+        - Relatórios e Analytics
+        - Outro
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem-statement
+    attributes:
+      label: Descrição do Problema *
+      description: Que problema esta funcionalidade resolve?
+      placeholder: "Ex: Atualmente não é possível visualizar um calendário mensal das atividades, dificultando o planejamento."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Solução Proposta *
+      description: Como você imagina que esta funcionalidade deveria funcionar?
+      placeholder: "Ex: Adicionar uma visualização de calendário mensal onde as atividades aparecem nos dias e horários correspondentes."
+    validations:
+      required: true
+
+  - type: textarea
+    id: user-story
+    attributes:
+      label: História de Usuário *
+      description: Descreva como um usuário usaria esta funcionalidade
+      placeholder: |
+        Como [tipo de usuário]
+        Eu quero [realizar uma ação]
+        Para que [benefício/objetivo]
+        
+        Ex: Como professor, eu quero exportar a lista de participantes de uma atividade em CSV para que eu possa importar no meu sistema de notas.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Critérios de Aceitação *
+      description: Como saberemos que a funcionalidade está completa e funcionando?
+      placeholder: |
+        - [ ] Critério 1
+        - [ ] Critério 2
+        - [ ] Critério 3
+        
+        Ex:
+        - [ ] Botão "Exportar" aparece na página de detalhes da atividade
+        - [ ] Ao clicar, um arquivo CSV é baixado
+        - [ ] O CSV contém: nome, email, data de inscrição de cada participante
+        - [ ] O formato do CSV é compatível com Excel
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Prioridade *
+      description: Quão importante é esta funcionalidade?
+      options:
+        - Crítica - Necessária para operação
+        - Alta - Muito importante
+        - Média - Seria útil ter
+        - Baixa - Nice to have
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas Consideradas
+      description: Você considerou outras soluções? Por que esta é melhor?
+      placeholder: "Ex: Consideramos adicionar a funcionalidade no backend apenas, mas seria mais útil ter na interface web."
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups ou Exemplos
+      description: Se possível, forneça exemplos visuais, links ou screenshots de sistemas similares
+      placeholder: "Ex: Veja como o sistema X implementa esta funcionalidade: [link]"
+
+  - type: checkboxes
+    id: impact-areas
+    attributes:
+      label: Áreas Impactadas
+      description: Que partes do sistema serão afetadas?
+      options:
+        - label: Interface Web (HTML/CSS/JS)
+        - label: Backend (Java/Spring)
+        - label: Banco de Dados (MongoDB)
+        - label: API REST
+        - label: Documentação
+        - label: Testes
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Contexto Adicional
+      description: Qualquer outra informação relevante
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## 🤖 Critérios de Aceitação para o Copilot
+        
+        A implementação deve:
+        1. Analisar a viabilidade técnica da funcionalidade
+        2. Seguir os princípios de Clean Architecture do projeto
+        3. Implementar com alterações mínimas e cirúrgicas
+        4. Adicionar testes para a nova funcionalidade
+        5. Atualizar documentação relevante
+        6. Garantir que não quebra funcionalidades existentes
+        7. Seguir os padrões de código do projeto
+        8. Validar todos os critérios de aceitação fornecidos
+        
+        ## 💡 Abordagem de Implementação
+        
+        ### 1. Análise
+        - Avaliar impacto nas camadas da arquitetura
+        - Identificar componentes que precisam ser alterados
+        - Verificar dependências e integrações necessárias
+        
+        ### 2. Design
+        - **Domain Layer**: Novas entidades ou value objects?
+        - **Application Layer**: Novos use cases ou DTOs?
+        - **Infrastructure Layer**: Novas configurações ou persistência?
+        - **Presentation Layer**: Novos endpoints ou UI?
+        
+        ### 3. Implementação
+        - Começar pela camada de domínio (se necessário)
+        - Implementar casos de uso na camada de aplicação
+        - Adicionar endpoints na camada de apresentação
+        - Atualizar frontend (se necessário)
+        
+        ### 4. Testes
+        - Testes unitários para lógica de domínio
+        - Testes de integração para endpoints
+        - Testes manuais na interface (se aplicável)
+        
+        ## 🏗️ Estrutura do Projeto
+        
+        ```
+        src/main/java/com/mergingtonhigh/schoolmanagement/
+        ├── domain/           # Regras de negócio puras
+        ├── application/      # Casos de uso e DTOs
+        ├── infrastructure/   # Implementações técnicas
+        └── presentation/     # Controllers e mappers
+        
+        src/main/resources/
+        └── static/           # Frontend (HTML/CSS/JS)
+        ```
+        
+        ## 📋 Checklist de Feature
+        
+        - [ ] Análise de viabilidade realizada
+        - [ ] Design da solução documentado
+        - [ ] Camadas apropriadas identificadas
+        - [ ] Código implementado seguindo Clean Architecture
+        - [ ] Testes unitários adicionados
+        - [ ] Testes de integração adicionados (se aplicável)
+        - [ ] Validação manual realizada
+        - [ ] Documentação atualizada
+        - [ ] Todos os critérios de aceitação atendidos
+        - [ ] Build completo passa (mvn clean install)
+        - [ ] Nenhuma regressão introduzida
+        
+        ## 🎯 Princípios de Implementação
+        
+        1. **Clean Architecture**: Dependências fluem para dentro
+        2. **SOLID**: Cada classe tem uma responsabilidade única
+        3. **Domain-Driven Design**: Modelo rico reflete o domínio
+        4. **Minimal Changes**: Menor alteração possível
+        5. **Test Coverage**: Cobrir novos caminhos de código
+        6. **Documentation**: Atualizar docs relevantes
+        
+        ## ⚠️ Considerações
+        
+        - Avaliar impacto em performance
+        - Considerar escalabilidade
+        - Verificar compatibilidade com funcionalidades existentes
+        - Validar requisitos de segurança
+        - Considerar experiência do usuário

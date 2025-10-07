@@ -1,0 +1,194 @@
+name: 🐛 Reportar Bug
+description: Reportar um problema ou comportamento inesperado no sistema
+title: "[Bug]: "
+labels: ["bug", "copilot"]
+assignees:
+  - copilot
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🐛 Formulário de Reporte de Bug
+        
+        Use este formulário para reportar problemas ou comportamentos inesperados no sistema.
+        Quanto mais detalhes você fornecer, mais rápido poderemos resolver.
+        
+        **O Copilot será automaticamente designado para investigar e corrigir.**
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Componente Afetado *
+      description: Qual parte do sistema está apresentando o problema?
+      options:
+        - Interface Web - Listagem de atividades
+        - Interface Web - Inscrição em atividades
+        - Interface Web - Login/Autenticação
+        - Interface Web - Filtros
+        - API REST - Endpoints de atividades
+        - API REST - Endpoints de inscrição
+        - Backend - Lógica de negócio
+        - Banco de Dados
+        - Não sei
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Descrição do Problema *
+      description: Descreva o problema que você está enfrentando
+      placeholder: "Ex: Quando tento inscrever um aluno na atividade Chess Club, o sistema retorna erro 500."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Comportamento Esperado *
+      description: O que deveria acontecer?
+      placeholder: "Ex: O aluno deveria ser inscrito com sucesso e aparecer na lista de participantes."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Comportamento Atual *
+      description: O que está acontecendo?
+      placeholder: "Ex: Uma mensagem de erro aparece e o aluno não é inscrito."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Passos para Reproduzir *
+      description: Liste os passos para reproduzir o problema
+      placeholder: |
+        1. Acesse a página inicial
+        2. Clique na atividade "Chess Club"
+        3. Preencha o email do aluno
+        4. Clique em "Inscrever"
+        5. Observe o erro
+    validations:
+      required: true
+
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: Frequência *
+      description: Com que frequência o problema ocorre?
+      options:
+        - Sempre (100%)
+        - Frequentemente (>50%)
+        - Às vezes (<50%)
+        - Raramente
+        - Ocorreu apenas uma vez
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Gravidade *
+      description: Qual o impacto do problema?
+      options:
+        - Crítico - Sistema inutilizável
+        - Alto - Funcionalidade principal quebrada
+        - Médio - Funcionalidade secundária afetada
+        - Baixo - Problema cosmético ou menor
+    validations:
+      required: true
+
+  - type: textarea
+    id: error-messages
+    attributes:
+      label: Mensagens de Erro
+      description: Copie qualquer mensagem de erro que apareça
+      placeholder: |
+        Ex: "Error 500: Internal Server Error"
+        ou copie do console do navegador (F12)
+      render: text
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Ambiente
+      description: Em qual ambiente o problema ocorre?
+      placeholder: |
+        - Navegador: Chrome 120
+        - Sistema Operacional: Windows 11
+        - Data/Hora: 2025-01-15 14:30
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Contexto Adicional
+      description: Qualquer outra informação que possa ajudar (screenshots, logs, etc.)
+      placeholder: "Ex: O problema começou após atualizar para a nova versão."
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## 🤖 Critérios de Aceitação para o Copilot
+        
+        A correção deve:
+        1. Reproduzir o bug seguindo os passos fornecidos
+        2. Identificar a causa raiz do problema
+        3. Implementar uma correção mínima e cirúrgica
+        4. Adicionar ou atualizar testes para prevenir regressão
+        5. Validar que a correção não introduz novos problemas
+        6. Testar cenários relacionados para garantir estabilidade
+        7. Documentar a correção no commit message
+        
+        ## 💡 Abordagem de Debug
+        
+        1. **Reproduzir**: Seguir os passos para reproduzir o bug
+        2. **Investigar**: 
+           - Verificar logs da aplicação
+           - Usar debugger se necessário
+           - Verificar estado do banco de dados
+        3. **Identificar**: Localizar a causa raiz
+        4. **Corrigir**: Implementar correção mínima
+        5. **Validar**: Testar a correção
+        6. **Prevenir**: Adicionar testes
+        
+        ## 🔍 Áreas Comuns de Problemas
+        
+        ### Backend (Java/Spring)
+        - `src/main/java/.../domain/entities/` - Validações de domínio
+        - `src/main/java/.../application/usecases/` - Lógica de negócio
+        - `src/main/java/.../presentation/controllers/` - Endpoints REST
+        - `src/main/java/.../infrastructure/` - Persistência e configuração
+        
+        ### Frontend (JavaScript)
+        - `src/main/resources/static/app.js` - Lógica da interface
+        - `src/main/resources/static/index.html` - Estrutura HTML
+        - `src/main/resources/static/styles.css` - Estilos
+        
+        ### Banco de Dados
+        - `src/main/java/.../infrastructure/migrations/` - Migrações
+        - Verificar estado da collection "activities" no MongoDB
+        
+        ## 📋 Checklist de Correção
+        
+        - [ ] Bug reproduzido localmente
+        - [ ] Causa raiz identificada
+        - [ ] Correção implementada
+        - [ ] Testes adicionados/atualizados
+        - [ ] Testes passam localmente
+        - [ ] Build completo passa (mvn clean install)
+        - [ ] Validado manualmente na interface
+        - [ ] Não introduz regressões
+        - [ ] Documentação atualizada (se necessário)
+        
+        ## ⚠️ Princípios de Correção
+        
+        - Fazer a **menor alteração possível** que resolve o problema
+        - Não "aproveitar" para fazer refatorações não relacionadas
+        - Manter compatibilidade com funcionalidades existentes
+        - Adicionar validações apropriadas
+        - Incluir tratamento de erros adequado

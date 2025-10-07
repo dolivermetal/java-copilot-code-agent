@@ -1,0 +1,182 @@
+name: 📅 Alterar Horário de Atividade
+description: Modificar os dias da semana ou horários de uma atividade existente
+title: "[Horário]: "
+labels: ["enhancement", "atividade", "horário", "copilot"]
+assignees:
+  - copilot
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 📅 Formulário de Alteração de Horário
+        
+        Use este formulário para solicitar mudanças nos dias ou horários de uma atividade.
+        
+        **O Copilot será automaticamente designado para implementar esta solicitação.**
+
+  - type: input
+    id: activity-name
+    attributes:
+      label: Nome da Atividade *
+      description: Nome exato da atividade
+      placeholder: "Ex: Drama Club"
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-schedule
+    attributes:
+      label: Horário Atual
+      description: (Opcional) Descreva o horário atual se souber
+      placeholder: "Ex: Quartas e sextas, 16:00-18:00"
+
+  - type: checkboxes
+    id: new-days
+    attributes:
+      label: Novos Dias da Semana *
+      description: Selecione os novos dias em que a atividade ocorrerá
+      options:
+        - label: Segunda-feira (Monday)
+        - label: Terça-feira (Tuesday)
+        - label: Quarta-feira (Wednesday)
+        - label: Quinta-feira (Thursday)
+        - label: Sexta-feira (Friday)
+        - label: Sábado (Saturday)
+        - label: Domingo (Sunday)
+
+  - type: input
+    id: new-start-time
+    attributes:
+      label: Novo Horário de Início *
+      description: Horário de início no formato HH:MM (24h)
+      placeholder: "15:30"
+    validations:
+      required: true
+
+  - type: input
+    id: new-end-time
+    attributes:
+      label: Novo Horário de Término *
+      description: Horário de término no formato HH:MM (24h)
+      placeholder: "17:00"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: reason
+    attributes:
+      label: Motivo da Alteração *
+      description: Por que o horário precisa ser alterado?
+      options:
+        - Conflito com outras atividades
+        - Disponibilidade do espaço/instalações
+        - Solicitação dos estudantes
+        - Disponibilidade do professor
+        - Otimização de transporte escolar
+        - Melhor horário para a faixa etária
+        - Outro
+    validations:
+      required: true
+
+  - type: textarea
+    id: justification
+    attributes:
+      label: Justificativa *
+      description: Explique em detalhes a necessidade desta alteração
+      placeholder: "Ex: O ginásio não está mais disponível às quartas-feiras devido a reformas. Precisamos mover para terças e quintas no mesmo horário."
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact-analysis
+    attributes:
+      label: Análise de Impacto
+      description: Como isso afetará os estudantes já inscritos?
+      placeholder: "Ex: Já verifiquei com os estudantes inscritos e todos podem comparecer no novo horário."
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmações *
+      description: Confirme os seguintes pontos
+      options:
+        - label: O espaço/instalação está disponível nos novos dias e horários
+          required: true
+        - label: Notificarei todos os estudantes inscritos sobre a mudança
+          required: true
+        - label: (Se aplicável) Confirmo disponibilidade de supervisão/instrutores
+          required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Informações Adicionais
+      description: Qualquer outra informação relevante
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## 🤖 Critérios de Aceitação para o Copilot
+        
+        A implementação deve:
+        1. Localizar a atividade existente pelo nome exato
+        2. Atualizar o objeto `ScheduleDetails` com os novos dias e horários
+        3. Atualizar também o campo `schedule` (string legível) com a nova descrição
+        4. Validar que os horários estão no formato correto (LocalTime)
+        5. Validar que o horário de término é posterior ao de início
+        6. Criar uma migração Mongock para aplicar as alterações
+        7. Verificar que o novo horário aparece corretamente na interface web
+        8. Garantir que os filtros por dia e horário continuam funcionando
+        
+        ## 💡 Dicas de Implementação
+        
+        - Criar nova migração: `V00X_UpdateActivitySchedule_[NomeAtividade].java`
+        - Localizar atividade: `mongoTemplate.findOne(Query.query(Criteria.where("name").is(activityName)), Activity.class)`
+        - Criar nova ScheduleDetails:
+          ```java
+          List<String> days = List.of("Monday", "Wednesday"); // dias em inglês
+          LocalTime startTime = LocalTime.of(15, 30);
+          LocalTime endTime = LocalTime.of(17, 0);
+          ScheduleDetails newSchedule = new ScheduleDetails(days, startTime, endTime);
+          activity.setScheduleDetails(newSchedule);
+          ```
+        - Atualizar descrição legível:
+          ```java
+          activity.setSchedule("Segundas e quartas, 15:30 - 17:00");
+          ```
+        - Persistir: `mongoTemplate.save(activity)`
+        
+        ## 🔍 Contexto Técnico
+        
+        - **Campos**: 
+          - `Activity.scheduleDetails` (tipo: ScheduleDetails)
+          - `Activity.schedule` (tipo: String - descrição legível)
+        - **Value Object**: `com.mergingtonhigh.schoolmanagement.domain.valueobjects.ScheduleDetails`
+        - **Formato de dias**: Usar nomes em inglês (Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday)
+        - **Formato de horário**: LocalTime do Java
+        
+        ## 📋 Formato do ScheduleDetails
+        
+        ```java
+        public class ScheduleDetails {
+            private List<String> days;      // ["Monday", "Wednesday"]
+            private LocalTime startTime;     // LocalTime.of(15, 30)
+            private LocalTime endTime;       // LocalTime.of(17, 0)
+        }
+        ```
+        
+        ## ⚠️ Validações Importantes
+        
+        - Dias devem estar em inglês e com primeira letra maiúscula
+        - Horário de término deve ser depois do horário de início
+        - Formato de horário: HH:MM em 24 horas
+        - Lista de dias não pode estar vazia
+        
+        ## 🎯 Impacto nos Filtros
+        
+        A interface web permite filtrar atividades por:
+        - Dia da semana (deve funcionar com os novos dias)
+        - Período (manhã, tarde, noite) - baseado no horário de início
+        - Os filtros usam o campo `scheduleDetails` para filtrar

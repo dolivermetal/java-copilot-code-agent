@@ -1,0 +1,130 @@
+name: 🎯 Adicionar Nova Atividade
+description: Solicitar a criação de uma nova atividade extracurricular no sistema
+title: "[Nova Atividade]: "
+labels: ["enhancement", "atividade", "copilot"]
+assignees:
+  - copilot
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 📝 Formulário de Nova Atividade
+        
+        Preencha os campos abaixo para criar uma nova atividade extracurricular. 
+        Todos os campos marcados com * são obrigatórios.
+        
+        **O Copilot será automaticamente designado para implementar esta solicitação.**
+
+  - type: input
+    id: activity-name
+    attributes:
+      label: Nome da Atividade *
+      description: Nome que será exibido para estudantes e professores
+      placeholder: "Ex: Clube de Robótica"
+    validations:
+      required: true
+
+  - type: textarea
+    id: activity-description
+    attributes:
+      label: Descrição da Atividade *
+      description: Descrição detalhada que será exibida aos estudantes
+      placeholder: "Ex: Aprenda conceitos de robótica, programação e engenharia através de projetos práticos e competições."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: activity-type
+    attributes:
+      label: Tipo/Categoria da Atividade *
+      description: Categoria que melhor representa esta atividade
+      options:
+        - Esportes (SPORTS)
+        - Artes (ARTS)
+        - Acadêmico (ACADEMIC)
+        - Música (MUSIC)
+        - Ciências (SCIENCE)
+        - Tecnologia (TECHNOLOGY)
+        - Clubes (CLUBS)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: days-of-week
+    attributes:
+      label: Dias da Semana *
+      description: Selecione os dias em que a atividade ocorrerá
+      options:
+        - label: Segunda-feira (Monday)
+        - label: Terça-feira (Tuesday)
+        - label: Quarta-feira (Wednesday)
+        - label: Quinta-feira (Thursday)
+        - label: Sexta-feira (Friday)
+        - label: Sábado (Saturday)
+        - label: Domingo (Sunday)
+
+  - type: input
+    id: start-time
+    attributes:
+      label: Horário de Início *
+      description: Horário de início no formato HH:MM (ex. 15:30)
+      placeholder: "15:30"
+    validations:
+      required: true
+
+  - type: input
+    id: end-time
+    attributes:
+      label: Horário de Término *
+      description: Horário de término no formato HH:MM (ex. 17:00)
+      placeholder: "17:00"
+    validations:
+      required: true
+
+  - type: input
+    id: max-participants
+    attributes:
+      label: Capacidade Máxima *
+      description: Número máximo de estudantes que podem participar
+      placeholder: "20"
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Informações Adicionais
+      description: Qualquer informação adicional relevante
+      placeholder: "Ex: Requer equipamento especial, pré-requisitos, etc."
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## 🤖 Critérios de Aceitação para o Copilot
+        
+        A implementação deve:
+        1. Criar uma nova atividade no banco de dados usando a migração Mongock
+        2. A atividade deve aparecer na listagem da interface web
+        3. Validar que todos os campos obrigatórios estão presentes
+        4. O tipo/categoria deve ser mapeado corretamente para o enum ActivityType
+        5. Os dias da semana devem ser convertidos para o formato correto (Monday, Tuesday, etc.)
+        6. Os horários devem ser validados e armazenados como LocalTime
+        7. A capacidade máxima deve ser um número positivo
+        
+        ## 💡 Dicas de Implementação
+        
+        - Criar uma nova migração em `src/main/java/com/mergingtonhigh/schoolmanagement/infrastructure/migrations/`
+        - Seguir o padrão da classe `V001_InitialDatabaseSetup.java`
+        - Usar a classe `Activity` do domínio com o construtor adequado
+        - Mapear o tipo da atividade usando o enum `ActivityType`
+        - Usar `ScheduleDetails` para armazenar dias e horários
+        - A atividade será automaticamente exibida na interface web após criação
+        
+        ## 🔍 Contexto Técnico
+        
+        - **Entidade**: `com.mergingtonhigh.schoolmanagement.domain.entities.Activity`
+        - **Valor Object**: `com.mergingtonhigh.schoolmanagement.domain.valueobjects.ScheduleDetails`
+        - **Enum de Tipos**: `com.mergingtonhigh.schoolmanagement.domain.valueobjects.ActivityType`
+        - **Migrações**: `src/main/java/.../infrastructure/migrations/`

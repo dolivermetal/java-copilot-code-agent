@@ -1,0 +1,137 @@
+name: 📊 Alterar Capacidade de Atividade
+description: Aumentar ou diminuir a capacidade máxima de participantes de uma atividade
+title: "[Capacidade]: "
+labels: ["enhancement", "atividade", "capacidade", "copilot"]
+assignees:
+  - copilot
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 📊 Formulário de Alteração de Capacidade
+        
+        Use este formulário para solicitar alteração na capacidade máxima de uma atividade.
+        Esta é uma solicitação comum e simplificada.
+        
+        **O Copilot será automaticamente designado para implementar esta solicitação.**
+
+  - type: input
+    id: activity-name
+    attributes:
+      label: Nome da Atividade *
+      description: Nome exato da atividade
+      placeholder: "Ex: Art Club"
+    validations:
+      required: true
+
+  - type: input
+    id: current-capacity
+    attributes:
+      label: Capacidade Atual
+      description: (Opcional) Informe a capacidade atual se souber
+      placeholder: "20"
+
+  - type: input
+    id: new-capacity
+    attributes:
+      label: Nova Capacidade *
+      description: Novo número máximo de participantes
+      placeholder: "30"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: reason
+    attributes:
+      label: Motivo da Alteração *
+      description: Por que a capacidade precisa ser alterada?
+      options:
+        - Alta demanda - atividade muito popular
+        - Novo espaço disponível
+        - Recursos adicionais (equipamentos, materiais)
+        - Redução de espaço/recursos
+        - Requisitos de segurança
+        - Proporção professor/aluno
+        - Outro
+    validations:
+      required: true
+
+  - type: textarea
+    id: justification
+    attributes:
+      label: Justificativa Detalhada *
+      description: Explique em detalhes a necessidade desta alteração
+      placeholder: "Ex: A atividade tem lista de espera com 15 alunos. Conseguimos um espaço maior que permite acomodar mais estudantes com segurança."
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmações *
+      description: Confirme os seguintes pontos
+      options:
+        - label: Tenho recursos suficientes (espaço, equipamentos, supervisão) para a nova capacidade
+          required: true
+        - label: (Se redução) Confirmo que há menos participantes inscritos do que a nova capacidade
+          required: false
+        - label: Notificarei os estudantes sobre a alteração de capacidade
+          required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Informações Adicionais
+      description: Qualquer outra informação relevante
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## 🤖 Critérios de Aceitação para o Copilot
+        
+        A implementação deve:
+        1. Localizar a atividade existente pelo nome exato
+        2. Verificar a capacidade atual da atividade
+        3. **IMPORTANTE**: Se for redução, validar que o número atual de participantes não excede a nova capacidade
+        4. Atualizar o campo `maxParticipants` da atividade
+        5. Criar uma migração Mongock para aplicar a alteração
+        6. Verificar que a nova capacidade aparece corretamente na interface web
+        7. Garantir que o indicador visual de capacidade reflete a nova capacidade
+        
+        ## 💡 Dicas de Implementação
+        
+        - Criar nova migração: `V00X_UpdateActivityCapacity_[NomeAtividade].java`
+        - Localizar atividade: `mongoTemplate.findOne(Query.query(Criteria.where("name").is(activityName)), Activity.class)`
+        - Validar participantes atuais: `activity.getParticipants().size() <= newCapacity`
+        - Atualizar capacidade: `activity.setMaxParticipants(newCapacity)`
+        - Persistir: `mongoTemplate.save(activity)`
+        - Adicionar método de rollback na migração
+        
+        ## 🔍 Contexto Técnico
+        
+        - **Campo**: `Activity.maxParticipants` (tipo: int)
+        - **Validação**: Método `validateMaxParticipants()` na classe Activity
+        - **Regra**: maxParticipants > 0
+        - **Regra crítica**: Não permitir capacidade < número atual de participantes
+        - **Interface**: O cartão de atividade mostra "X inscritos" e "Y vagas restantes"
+        
+        ## ⚠️ Validações Críticas
+        
+        ```java
+        // Verificar antes de reduzir
+        if (newCapacity < activity.getCurrentParticipantCount()) {
+            throw new IllegalStateException(
+                "Cannot reduce capacity below current participant count");
+        }
+        ```
+        
+        ## 📋 Checklist de Teste
+        
+        - [ ] Atividade localizada corretamente
+        - [ ] Capacidade atualizada no banco
+        - [ ] Interface web mostra nova capacidade
+        - [ ] Indicador de vagas disponíveis correto
+        - [ ] Se aumento: permite novas inscrições até nova capacidade
+        - [ ] Se redução: valida número de participantes atuais

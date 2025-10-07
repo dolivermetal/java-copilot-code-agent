@@ -1,0 +1,157 @@
+name: ✏️ Modificar Atividade Existente
+description: Solicitar alterações em uma atividade extracurricular existente
+title: "[Modificar Atividade]: "
+labels: ["enhancement", "atividade", "copilot"]
+assignees:
+  - copilot
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 📝 Formulário de Modificação de Atividade
+        
+        Use este formulário para solicitar alterações em uma atividade existente.
+        Preencha apenas os campos que deseja modificar.
+        
+        **O Copilot será automaticamente designado para implementar esta solicitação.**
+
+  - type: input
+    id: activity-name
+    attributes:
+      label: Nome da Atividade Existente *
+      description: Nome exato da atividade que deseja modificar
+      placeholder: "Ex: Chess Club"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: fields-to-modify
+    attributes:
+      label: Campos a Modificar *
+      description: Selecione quais campos deseja alterar
+      options:
+        - label: Nome da atividade
+        - label: Descrição
+        - label: Tipo/Categoria
+        - label: Dias da semana
+        - label: Horário de início
+        - label: Horário de término
+        - label: Capacidade máxima
+
+  - type: input
+    id: new-name
+    attributes:
+      label: Novo Nome
+      description: (Opcional) Novo nome para a atividade
+      placeholder: "Ex: Advanced Chess Club"
+
+  - type: textarea
+    id: new-description
+    attributes:
+      label: Nova Descrição
+      description: (Opcional) Nova descrição para a atividade
+      placeholder: "Ex: Aprenda estratégias avançadas de xadrez..."
+
+  - type: dropdown
+    id: new-type
+    attributes:
+      label: Novo Tipo/Categoria
+      description: (Opcional) Nova categoria para a atividade
+      options:
+        - Não alterar
+        - Esportes (SPORTS)
+        - Artes (ARTS)
+        - Acadêmico (ACADEMIC)
+        - Música (MUSIC)
+        - Ciências (SCIENCE)
+        - Tecnologia (TECHNOLOGY)
+        - Clubes (CLUBS)
+
+  - type: checkboxes
+    id: new-days
+    attributes:
+      label: Novos Dias da Semana
+      description: (Opcional) Selecione os novos dias. Deixe em branco para não alterar.
+      options:
+        - label: Segunda-feira (Monday)
+        - label: Terça-feira (Tuesday)
+        - label: Quarta-feira (Wednesday)
+        - label: Quinta-feira (Thursday)
+        - label: Sexta-feira (Friday)
+        - label: Sábado (Saturday)
+        - label: Domingo (Sunday)
+
+  - type: input
+    id: new-start-time
+    attributes:
+      label: Novo Horário de Início
+      description: (Opcional) Novo horário de início no formato HH:MM
+      placeholder: "15:30"
+
+  - type: input
+    id: new-end-time
+    attributes:
+      label: Novo Horário de Término
+      description: (Opcional) Novo horário de término no formato HH:MM
+      placeholder: "17:00"
+
+  - type: input
+    id: new-max-participants
+    attributes:
+      label: Nova Capacidade Máxima
+      description: (Opcional) Novo número máximo de participantes
+      placeholder: "25"
+
+  - type: textarea
+    id: justification
+    attributes:
+      label: Justificativa *
+      description: Explique por que estas alterações são necessárias
+      placeholder: "Ex: A atividade está muito popular e precisamos aumentar a capacidade..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Informações Adicionais
+      description: Qualquer informação adicional relevante
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## 🤖 Critérios de Aceitação para o Copilot
+        
+        A implementação deve:
+        1. Localizar a atividade existente pelo nome exato fornecido
+        2. Modificar apenas os campos especificados, mantendo os demais inalterados
+        3. Validar que os novos valores são válidos (horários, capacidade, etc.)
+        4. Atualizar o banco de dados através de uma migração Mongock
+        5. Verificar que as alterações aparecem corretamente na interface web
+        6. Se o nome for alterado, garantir que referências sejam atualizadas
+        7. Se a capacidade for reduzida, verificar que não há mais participantes do que o novo limite
+        
+        ## 💡 Dicas de Implementação
+        
+        - Criar uma nova migração em `src/main/java/.../infrastructure/migrations/`
+        - Usar `mongoTemplate.findOne()` para localizar a atividade existente
+        - Aplicar as alterações nos campos especificados
+        - Usar `mongoTemplate.save()` para persistir as alterações
+        - Validar os novos valores usando os métodos de validação da entidade Activity
+        - Se modificar o nome, considerar impacto em inscrições existentes
+        - Manter a lista de participantes existentes
+        
+        ## 🔍 Contexto Técnico
+        
+        - **Entidade**: `com.mergingtonhigh.schoolmanagement.domain.entities.Activity`
+        - **Repository**: `com.mergingtonhigh.schoolmanagement.domain.repositories.ActivityRepository`
+        - **Migrações**: Seguir padrão de `V001_InitialDatabaseSetup.java`
+        - **Validações**: Usar métodos validate* da classe Activity
+        
+        ## ⚠️ Limitações
+        
+        - Não é possível reduzir a capacidade abaixo do número atual de participantes
+        - Alterações de horário podem impactar estudantes já inscritos
+        - Modificações no nome requerem atenção especial para manter integridade
