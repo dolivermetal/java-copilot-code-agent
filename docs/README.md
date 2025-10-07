@@ -32,10 +32,13 @@ src/main/java/com/mergingtonhigh/schoolmanagement/
 ├── application/              # 🔧 Camada de Aplicação
 │   ├── dtos/                 # Data Transfer Objects
 │   │   ├── ActivityDTO.java
+│   │   ├── ActivityTypeDTO.java
+│   │   ├── LoginRequestDTO.java
 │   │   ├── StudentRegistrationDTO.java
 │   │   └── TeacherDTO.java
 │   └── usecases/             # Casos de uso
 │       ├── ActivityUseCase.java
+│       ├── AuthenticationUseCase.java
 │       └── StudentRegistrationUseCase.java
 ├── infrastructure/           # 🏭 Camada de Infraestrutura
 │   ├── config/               # Configurações
@@ -48,7 +51,9 @@ src/main/java/com/mergingtonhigh/schoolmanagement/
 │       └── TeacherRepositoryImpl.java
 └── presentation/             # 🎨 Camada de Apresentação
     ├── controllers/          # Controllers REST
-    │   └── ActivityController.java
+    │   ├── ActivityController.java
+    │   ├── AuthController.java
+    │   └── StaticController.java
     └── mappers/              # Mapeadores DTO ↔ Entity
         ├── ActivityMapper.java
         └── TeacherMapper.java
@@ -100,9 +105,11 @@ src/main/java/com/mergingtonhigh/schoolmanagement/
 
 ### 👨‍🏫 Sistema de Autenticação
 
-- **Login de professores** com username/senha
+- **Login de professores** com username/senha via endpoint REST
+- **Validação de sessão** para verificar usuários autenticados
 - **Controle de acesso** baseado em roles (TEACHER/ADMIN)
-- **Autenticação requerida** para inscrições
+- **Autenticação requerida** para inscrições e cancelamentos
+- **Armazenamento local** da sessão no frontend para manter usuário logado
 
 ### 📝 Gestão de Inscrições
 
@@ -172,6 +179,23 @@ Crie um arquivo `.env` baseado no `.env.example`
 
 ### Endpoints Principais
 
+#### Autenticação
+
+```http
+POST /auth/login
+Content-Type: application/x-www-form-urlencoded
+
+username=mrodriguez&password=art123
+
+Response: { "username": "mrodriguez", "name": "Sr. Rodriguez", "role": "TEACHER" }
+```
+
+```http
+GET /auth/check-session?username=mrodriguez
+
+Response: { "username": "mrodriguez", "name": "Sr. Rodriguez", "role": "TEACHER" }
+```
+
 #### Atividades
 
 ```http
@@ -186,12 +210,12 @@ GET /activities/days
 POST /activities/{activityName}/signup
 Content-Type: application/x-www-form-urlencoded
 
-email=student@mergington.edu&teacher_username=teacher1
+email=student@mergington.edu&teacher_username=mrodriguez
 
 POST /activities/{activityName}/unregister
 Content-Type: application/x-www-form-urlencoded
 
-email=student@mergington.edu&teacher_username=teacher1
+email=student@mergington.edu&teacher_username=mrodriguez
 ```
 
 ## 🧪 Testes
@@ -225,15 +249,36 @@ O sistema utiliza **Mongock** para realizar migrações automáticas do banco de
 
 ### Professores Padrão
 
-- **admin** - Administrador principal
-- **teacher.rodriguez** - Professor de artes
-- **teacher.chen** - Professor de xadrez
+| Username | Nome | Role | Senha Padrão |
+|----------|------|------|--------------|
+| `mrodriguez` | Sr. Rodriguez | TEACHER | `art123` |
+| `mchen` | Sra. Chen | TEACHER | `chess123` |
+| `principal` | Diretor Martinez | ADMIN | `admin123` |
+
+> **Nota**: As senhas podem ser configuradas via variáveis de ambiente (`TEACHER_RODRIGUEZ_PASSWORD`, `TEACHER_CHEN_PASSWORD`, `PRINCIPAL_PASSWORD`)
 
 ### Atividades Exemplo
 
-- **Art Club** - Terças e quintas, 15:30-17:00
-- **Chess Club** - Segundas e quartas, 15:30-17:00
-- **Drama Club** - Quartas e sextas, 16:00-18:00
+O sistema inclui 14 atividades pré-cadastradas:
+
+| Atividade | Dias | Horário | Tipo | Capacidade |
+|-----------|------|---------|------|------------|
+| Clube de Xadrez | Seg, Sex | 15:15-16:45 | ACADEMIC | 12 |
+| Aula de Programação | Ter, Qui | 07:00-08:00 | TECHNOLOGY | 20 |
+| Fitness Matinal | Seg, Qua, Sex | 06:30-07:45 | SPORTS | 30 |
+| Time de Futebol | Ter, Qui | 15:30-17:30 | SPORTS | 22 |
+| Time de Basquete | Qua, Sex | 15:15-17:00 | SPORTS | 15 |
+| Clube de Arte | Qui | 15:15-17:00 | ARTS | 15 |
+| Clube de Teatro | Seg, Qua | 15:30-17:30 | ARTS | 20 |
+| Clube de Matemática | Ter | 07:15-08:00 | ACADEMIC | 10 |
+| Equipe de Debates | Sex | 15:30-17:30 | ACADEMIC | 12 |
+| Oficina de Robótica | Sáb | 10:00-14:00 | TECHNOLOGY | 15 |
+| Olimpíada de Ciências | Sáb | 13:00-16:00 | ACADEMIC | 18 |
+| Torneio de Xadrez | Dom | 14:00-17:00 | ACADEMIC | 16 |
+| Serviço Comunitário | Sáb | 09:00-12:00 | COMMUNITY | 25 |
+| Manga Maniacs | Ter | 19:00-20:30 | ARTS | 15 |
+
+Todas as atividades já possuem alguns estudantes inscritos para demonstração.
 
 ## 🔒 Segurança
 
